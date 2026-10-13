@@ -610,7 +610,7 @@ def dashboard_page():
 
 
 @app.route("/student")
-gdef student_page():
+def student_page():
     student_id = request.args.get("student_id", default=1, type=int)
     student = get_student(student_id)
     if not student:
