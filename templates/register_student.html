@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Student | ITS Engineering College</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body class="register-body">
+    <div class="container form-shell">
+      <div class="card register-card">
+        <div class="brand-block narrow">
+          <div class="logo-wrap">ITS</div>
+          <div>
+            <p class="mini-label">Student Registration</p>
+            <h2>Register New Student</h2>
+          </div>
+        </div>
+
+        <form id="studentForm" class="student-form">
+          <div class="form-grid">
+            <label>
+              <span>Student Name</span>
+              <input type="text" id="name" name="name" placeholder="Enter student name" required />
+            </label>
+            <label>
+              <span>Roll Number</span>
+              <input type="text" id="roll_number" name="roll_number" placeholder="Enter roll number" required />
+            </label>
+            <label>
+              <span>Enrollment Number</span>
+              <input type="text" id="enrollment_number" name="enrollment_number" placeholder="Enter enrollment number" required />
+            </label>
+            <label>
+              <span>Branch</span>
+              <input type="text" id="branch" name="branch" placeholder="e.g. CSE" required />
+            </label>
+            <label>
+              <span>Year</span>
+              <input type="text" id="year" name="year" placeholder="e.g. 2nd Year" required />
+            </label>
+            <label>
+              <span>Section</span>
+              <input type="text" id="section" name="section" value="L" placeholder="e.g. L" required />
+            </label>
+          </div>
+
+          <div class="camera-wrap small">
+            <video id="registerCamera" autoplay playsinline muted></video>
+            <div class="scan-ring"></div>
+          </div>
+
+          <div class="cta-row inline">
+            <button type="button" id="captureFaceBtn" class="primary-btn">Capture Face</button>
+            <button type="button" id="registerStudentBtn" class="secondary-btn">Register Face</button>
+          </div>
+
+          <div class="status-box" id="registerStatusBox">
+            <span class="status-dot"></span>
+            <p id="registerStatusText">Awaiting student details...</p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/face.js') }}"></script>
+  </body>
+</html>

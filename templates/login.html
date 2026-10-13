@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ITS Engineering College | Face Recognition Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body class="login-body">
+    <div class="login-shell">
+      <div class="login-panel card">
+        <div class="brand-block">
+          <div class="logo-wrap">ITS</div>
+          <div>
+            <p class="mini-label">ITS Engineering College</p>
+            <h1>Face Recognition Attendance System</h1>
+          </div>
+        </div>
+
+        <p class="subtitle">Smart &amp; Secure Attendance Management</p>
+
+        <div class="camera-wrap">
+          <video id="camera" autoplay playsinline muted></video>
+          <div class="scan-ring"></div>
+        </div>
+
+        <div class="status-box" id="statusBox">
+          <span class="status-dot"></span>
+          <p id="statusText">Scanning Face...</p>
+        </div>
+
+        <div class="cta-row">
+          <button id="startRecognitionBtn" class="primary-btn">Sign In with Face</button>
+          <button id="signOutBtn" class="secondary-btn">Sign Out with Face</button>
+          <button id="tryAgainBtn" class="secondary-btn hidden">Try Again</button>
+        </div>
+
+        <div class="registration-prompt">
+          <span>First time here?</span>
+          <a href="{{ url_for('register_student_page') }}">Register student and save face</a>
+        </div>
+
+        <div id="studentCard" class="student-card hidden">
+          <div class="student-basic">
+            <div class="avatar-box">S</div>
+            <div>
+              <h3 id="studentName">Student Name</h3>
+              <p id="studentBranch">Branch</p>
+            </div>
+          </div>
+          <div class="student-grid">
+            <div><span>Roll No.</span><strong id="studentRoll">--</strong></div>
+            <div><span>Enrollment</span><strong id="studentEnrollment">--</strong></div>
+            <div><span>Year</span><strong id="studentYear">--</strong></div>
+            <div><span>Section</span><strong id="studentSection">--</strong></div>
+            <div><span>College</span><strong>ITS Engineering College</strong></div>
+            <div><span>Date</span><strong id="studentDate">--</strong></div>
+            <div><span>Time</span><strong id="studentTime">--</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/face.js') }}"></script>
+  </body>
+</html>

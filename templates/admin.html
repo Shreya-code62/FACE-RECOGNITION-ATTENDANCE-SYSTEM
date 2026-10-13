@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | ITS Engineering College</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body class="dashboard-body admin-body">
+    <div class="topbar">
+      <div>
+        <p class="mini-label">Admin / Teacher Dashboard</p>
+        <h2>ITS Engineering College</h2>
+      </div>
+      <div class="action-cluster">
+        <a href="{{ url_for('register_student_page') }}" class="primary-btn">Add Student</a>
+        <a href="{{ url_for('register_student_page') }}" class="secondary-btn">Register Face</a>
+        <a href="{{ url_for('admin_page') }}" class="secondary-btn">View Attendance</a>
+        <a href="{{ url_for('login') }}" class="secondary-btn">Logout</a>
+      </div>
+    </div>
+
+    <div class="container dashboard-shell admin-shell">
+      <div class="summary-grid admin-grid">
+        <div class="metric-card card">
+          <span>Total Students</span>
+          <strong>{{ summary.total_students }}</strong>
+        </div>
+        <div class="metric-card card">
+          <span>Present Today</span>
+          <strong>{{ summary.present_today }}</strong>
+        </div>
+        <div class="metric-card card">
+          <span>Absent Today</span>
+          <strong>{{ summary.absent_today }}</strong>
+        </div>
+        <div class="metric-card card">
+          <span>Attendance %</span>
+          <strong>{{ summary.attendance_percentage }}%</strong>
+        </div>
+      </div>
+
+      <div class="table-card card">
+        <div class="section-header">
+          <h3>Recent Attendance Records</h3>
+          <div class="filter-row admin-filters">
+            <input type="date" id="adminDateFilter" />
+            <input type="text" id="adminBranchFilter" placeholder="Branch" />
+            <input type="text" id="adminSectionFilter" placeholder="Section" />
+            <input type="text" id="adminStudentFilter" placeholder="Student" />
+            <select id="adminStatusFilter">
+              <option value="">All Status</option>
+              <option value="Present">Present</option>
+              <option value="Absent">Absent</option>
+            </select>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Roll No.</th>
+              <th>Branch</th>
+              <th>Subject</th>
+              <th>Code</th>
+              <th>Date</th>
+              <th>Signed In</th>
+              <th>Signed Out</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+            <tr>
+              <td>{{ record.student }}</td>
+              <td>{{ record.roll_number }}</td>
+              <td>{{ record.branch }}</td>
+              <td>{{ record.subject_name }}</td>
+              <td>{{ record.subject_code or 'Unassigned' }}</td>
+              <td>{{ record.date }}</td>
+              <td>{{ record.time }}</td>
+              <td>{{ record.sign_out_time or 'Active' }}</td>
+              <td><span class="badge {{ 'present' if record.status == 'Present' else 'absent' }}">{{ record.status }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>

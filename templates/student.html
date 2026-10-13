@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Profile | ITS Engineering College</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body class="dashboard-body">
+    <div class="topbar">
+      <div>
+        <p class="mini-label">ITS Engineering College</p>
+        <h2>Student Profile</h2>
+      </div>
+      <a href="{{ url_for('dashboard_page') }}?student_id={{ student.id }}" class="secondary-btn">Open Dashboard</a>
+    </div>
+
+    <div class="container profile-page">
+      <div class="card highlight-card">
+        <div class="student-basic">
+          <div class="profile-image-wrap large">
+            <img src="{{ student.photo if student.photo else '/static/images/college-logo.png' }}" alt="Student photo" />
+          </div>
+          <div>
+            <h2>{{ student.name }}</h2>
+            <p>Roll No.: {{ student.roll_number }}</p>
+            <p>Enrollment No.: {{ student.enrollment_number }}</p>
+            <p>Branch: {{ student.branch }}</p>
+            <p>Year: {{ student.year }}</p>
+            <p>Section: {{ student.section }}</p>
+            <p>College: ITS Engineering College</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

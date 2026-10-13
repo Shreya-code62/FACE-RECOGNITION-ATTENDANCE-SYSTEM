@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard | ITS Engineering College</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body class="dashboard-body">
+    <button class="mobile-menu-toggle" id="menuToggle" type="button" aria-label="Open navigation">☰</button>
+    <div class="app-layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-mark">ITS</div>
+          <div><strong>ITS Portal</strong><span>Student services</span></div>
+        </div>
+        <nav class="sidebar-nav" aria-label="Student navigation">
+          <a class="nav-item active" href="#overview"><span>▦</span>Dashboard</a>
+          <a class="nav-item" href="{{ url_for('login') }}"><span>◉</span>Face Attendance</a>
+          <a class="nav-item" href="#timetableSection"><span>◷</span>Timetable</a>
+          <a class="nav-item" href="#attendanceSection"><span>▤</span>Attendance</a>
+          <a class="nav-item" href="#profileSection"><span>◎</span>Profile</a>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="sidebar-session"><span class="online-dot"></span><span>Session active</span></div>
+          <a class="nav-item" href="{{ url_for('login') }}"><span>↪</span>Logout</a>
+        </div>
+      </aside>
+
+      <div class="app-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">{{ college.department }} · {{ college.academic_year }}</p>
+            <h1>Good to see you, {{ student.name.split(' ')[0] }}</h1>
+          </div>
+          <div class="topbar-profile">
+            <div class="topbar-avatar">{{ student.name[0] }}</div>
+            <div><strong>{{ student.name }}</strong><span>{{ student.branch }} · {{ student.section }}</span></div>
+            <a href="{{ url_for('login') }}" class="icon-link" aria-label="Logout" title="Logout">↪</a>
+          </div>
+        </header>
+
+        <main class="dashboard-main" id="overview">
+          <section class="welcome-strip">
+            <div>
+              <span class="section-kicker">{{ college.semester }}</span>
+              <h2>Your academic overview</h2>
+              <p>{{ college.name }} · Room {{ college.room }} · Effective from {{ college.effective_from }}</p>
+            </div>
+            <a href="{{ url_for('login') }}" class="primary-btn">Scan face <span>→</span></a>
+          </section>
+
+          <section class="summary-grid" aria-label="Attendance summary">
+            <article class="metric-card metric-primary">
+              <span class="metric-label">Overall attendance</span>
+              <strong>{{ summary.attendance }}%</strong>
+              <div class="mini-progress"><span style="width: {{ summary.attendance }}%"></span></div>
+              <small>{{ 'Good standing' if summary.attendance >= 75 else 'Needs attention' }}</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Classes attended</span>
+              <strong>{{ summary.present }}</strong>
+              <small>of {{ summary.total_classes }} total classes</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Classes missed</span>
+              <strong>{{ summary.absent }}</strong>
+              <small>Keep your streak going</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Today's classes</span>
+              <strong id="todayClassesValue">—</strong>
+              <small id="todayClassesLabel">From your timetable</small>
+            </article>
+          </section>
+
+          <section class="dashboard-grid">
+            <article class="surface profile-card" id="profileSection">
+              <div class="surface-heading"><div><span class="section-kicker">Student profile</span><h3>Your details</h3></div><span class="profile-badge">CSE</span></div>
+              <div class="profile-summary">
+                <div class="profile-image-wrap">
+                  <img src="{{ student.photo if student.photo else '/static/images/college-logo.png' }}" alt="Student profile" />
+                </div>
+                <div><h3>{{ student.name }}</h3><p>{{ student.branch }} · {{ student.year }}</p></div>
+              </div>
+              <dl class="profile-details">
+                <div><dt>Roll number</dt><dd>{{ student.roll_number }}</dd></div>
+                <div><dt>Enrollment</dt><dd>{{ student.enrollment_number }}</dd></div>
+                <div><dt>Section</dt><dd>{{ student.section }}</dd></div>
+                <div><dt>Course</dt><dd>B.Tech</dd></div>
+              </dl>
+              <a class="text-link" href="{{ url_for('student_page') }}?student_id={{ student.id }}">View full profile <span>→</span></a>
+            </article>
+
+            <article class="surface next-class-card">
+              <div class="surface-heading"><div><span class="section-kicker">Your schedule</span><h3>Next class</h3></div><span class="live-pill"><span></span>Live timetable</span></div>
+              <div id="nextClassContent" class="next-class-content"><strong>Loading schedule</strong><span>Checking today's timetable</span></div>
+              <div class="room-line">⌖ {{ college.room }}</div>
+            </article>
+          </section>
+
+          <section class="surface timetable-surface" id="timetableSection">
+            <div class="surface-heading timetable-heading"><div><span class="section-kicker">Weekly schedule</span><h2>Class timetable</h2><p>Tap a class to see its code and faculty.</p></div><span class="room-tag">{{ college.room }}</span></div>
+            <div class="timetable-scroll">
+              <div id="weeklyTimetable" class="weekly-timetable" data-room="{{ college.room }}">
+                <div class="timetable-header"><div>TIME</div>{% for day in timetable.keys() %}<div data-day-header="{{ day }}">{{ day[:3]|upper }}</div>{% endfor %}</div>
+                <div id="timetableBody" class="timetable-body"></div>
+              </div>
+            </div>
+            <div class="timetable-legend"><span><i class="legend-dot theory"></i>Theory</span><span><i class="legend-dot lab"></i>Lab</span><span><i class="legend-dot activity"></i>Activity</span><span><i class="legend-dot break"></i>Break</span></div>
+            <div class="timetable-source" aria-hidden="true">
+              {% for day, entries in timetable.items() %}{% for entry in entries %}<div class="schedule-entry" data-day="{{ day }}" data-time="{{ entry.time }}" data-label="{{ entry.label }}" data-code="{{ entry.code }}" data-kind="{{ entry.kind }}"></div>{% endfor %}{% endfor %}
+            </div>
+          </section>
+
+          <section class="surface attendance-surface" id="attendanceSection">
+            <div class="surface-heading">
+              <div>
+                <span class="section-kicker">Attendance record</span>
+                <h2>Attendance history</h2>
+              </div>
+              <div class="filter-row">
+                <input type="date" id="dateFilter" aria-label="Filter by date" />
+                <input type="text" id="subjectFilter" placeholder="Search subject" aria-label="Search subject" />
+                <select id="statusFilter" aria-label="Filter by status">
+                  <option value="">All status</option>
+                  <option value="Present">Present</option>
+                  <option value="Absent">Absent</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="attendance-record-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Subject Name</th>
+                    <th>Subject Code</th>
+                    <th>Sign-in Time</th>
+                    <th>Attendance Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for record in attendance %}
+                  <tr class="attendance-row">
+                    <td data-label="Date">{{ record.date_display or record.date }}</td>
+                    <td data-label="Subject Name">{{ record.subject_name }}</td>
+                    <td data-label="Subject Code"><span class="code-chip">{{ record.subject_code or 'N/A' }}</span></td>
+                    <td data-label="Sign-in Time">{{ record.time_display or record.time }}</td>
+                    <td data-label="Attendance Status">
+                      <span class="status-badge {{ 'present' if record.status == 'Present' else 'absent' }}">{{ record.status }}</span>
+                    </td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td colspan="5" class="empty-state">No attendance records yet.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="surface subjects-surface">
+            <div class="surface-heading"><div><span class="section-kicker">Academic catalog</span><h2>Subjects &amp; faculty</h2></div><span class="room-tag">{{ subjects|length }} subjects</span></div>
+            <div class="subject-grid">{% for subject in subjects %}<article class="subject-item"><div class="subject-heading"><strong>{{ subject.short_name }}</strong><span class="subject-kind {{ subject.kind|lower }}">{{ subject.kind }}</span></div><h4>{{ subject.name }}</h4><p><span>{{ subject.code }}</span>{{ subject.faculty }}</p></article>{% endfor %}</div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script>window.subjectCatalog = {{ subjects|tojson }};</script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>
