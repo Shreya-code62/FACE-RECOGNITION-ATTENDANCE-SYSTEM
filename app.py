@@ -816,9 +816,9 @@ def api_admin_attendance():
     records = get_admin_records()
     summary = get_admin_summary()
     return jsonify({"success": True, "summary": summary, "attendance": records})
-
+init_db()
+ensure_demo_data()
+FACE_DIR.mkdir(exist_ok=True)
 
 if __name__ == "__main__":
-    init_db()
-    ensure_demo_data()
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=False)  
